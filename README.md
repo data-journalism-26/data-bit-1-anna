@@ -9,7 +9,7 @@ Overview:
 This Data Bit examines whether living standards across European countries are converging — and how the picture changes depending on which indicator you look at. Four measures are brought together in a single interactive tool: the Price Level Index (PLI), GDP per capita in Purchasing Power Standards, median equivalised net income, and HICP inflation. 
 
 
-Final Article:
+Final Dashboard:
 https://rawcdn.githack.com/data-journalism-26/data-bit-1-anna/main/outputs/dashboard.html
 
 Data:
