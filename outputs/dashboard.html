@@ -356,29 +356,6 @@
     <div class="caption">Blue dots = later year &nbsp;·&nbsp; Faded red dots = earlier year &nbsp;·&nbsp; Lines show direction of change &nbsp;·&nbsp; Hover for details</div>
   </div>
 
-  <!-- FINDINGS -->
-  <div class="section">
-    <h2>What the data reveals</h2>
-    <div class="findings-grid">
-      <div class="finding">
-        <div class="finding-title">The East–West price gap is narrowing</div>
-        <p>A decade ago, countries like Bulgaria, Romania and Poland had price levels around 50% below the EU average. That gap has been closing steadily. Compare PLI across years to see how Eastern European economies have been converging toward Western price levels — even as wage convergence has lagged behind.</p>
-      </div>
-      <div class="finding">
-        <div class="finding-title">When GDP lies: the Irish anomaly</div>
-        <p>Plot GDP against Median Income and look for Ireland. Its GDP per capita (PPS) is among the highest in Europe — but its median income tells a more modest story. Multinational companies book profits in Ireland, inflating GDP far beyond what Irish households actually earn. GDP alone can be a poor proxy for living standards.</p>
-      </div>
-      <div class="finding">
-        <div class="finding-title">The 2022 inflation shock hit unevenly</div>
-        <p>Set the year range to 2021–2023 and plot HICP against PLI. The Baltic states — Estonia, Latvia and Lithuania — experienced some of the highest inflation rates in the EU, exceeding 15–20% at the peak. Meanwhile, countries like France and Switzerland remained comparatively stable.</p>
-      </div>
-      <div class="finding">
-        <div class="finding-title">Luxembourg: the continent's perennial outlier</div>
-        <p>Luxembourg consistently appears as an extreme outlier in almost every combination of metrics. It has the highest GDP per capita, among the highest price levels, and the highest median incomes in Europe by a wide margin. Try filtering it out to see how the rest of Europe clusters.</p>
-      </div>
-    </div>
-  </div>
-
   <!-- SOURCE -->
   <div class="source-line">
     Data source: <a href="https://ec.europa.eu/eurostat" target="_blank">Eurostat</a> — prc_ppp_ind (PLI), nama_10_pc (GDP per capita, PPS), ilc_di03 (Median income), prc_hicp_aind (HICP inflation). All figures refer to annual data. GDP and PLI are indexed to EU27 = 100.
@@ -407,7 +384,7 @@ function parseCSV(text) {
 }
 
 // Show loading state
-document.getElementById('scatter').innerHTML = '<p style="padding:40px;color:#888;font-family:sans-serif">Loading data...</p>';
+// data loading...
 
 fetch(CSV_URL)
   .then(r => {
