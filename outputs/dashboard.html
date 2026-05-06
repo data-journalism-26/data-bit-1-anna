@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Is Europe Converging? Comparing Living Standards Across the Continent</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #faf9f7;
+    color: #1c1c1c;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  .page { max-width: 1100px; margin: 0 auto; padding: 0 32px 80px; }
+
+  /* HEADER */
+  .masthead {
+    border-bottom: 2px solid #1c1c1c;
+    padding: 40px 0 28px;
+    margin-bottom: 40px;
+  }
+
+  .kicker {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+    margin-bottom: 18px;
+    max-width: 780px;
+  }
+
+  .deck {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: #333;
+    max-width: 700px;
+    margin-bottom: 18px;
+  }
+
+  .byline {
+    font-size: 12px;
+    color: #888;
+    letter-spacing: 0.05em;
+  }
+
+  /* SECTIONS */
+  .section { margin-bottom: 48px; }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  p { font-size: 15px; line-height: 1.75; color: #333; margin-bottom: 14px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* INDICATOR CARDS */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid #e0ddd8;
+    border-top: 3px solid #1c1c1c;
+    padding: 18px 20px;
+  }
+
+  .card-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1c1c1c;
+    margin-bottom: 8px;
+  }
+
+  .card p { font-size: 13px; line-height: 1.65; color: #555; margin: 0; }
+
+  /* CONTROLS */
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 40px;
+    background: #fff;
+    border: 1px solid #e0ddd8;
+    padding: 24px 28px;
+    margin-bottom: 8px;
+  }
+
+  .control-group { display: flex; flex-direction: column; gap: 8px; }
+
+  .control-group label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #888;
+  }
+
+  .btn-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .btn {
+    padding: 6px 14px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    background: #fff;
+    color: #555;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn:hover { border-color: #1c1c1c; color: #1c1c1c; }
+  .btn.active-x { background: #1c1c1c; color: #fff; border-color: #1c1c1c; }
+  .btn.active-y { background: #fff; color: #c0392b; border-color: #c0392b; font-weight: 500; }
+  .btn.active-x.active-y { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+  .year-row {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .year-display {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .year-badge {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border: 2px solid;
+  }
+
+  .year-badge.y1 { border-color: #e8453c; color: #e8453c; opacity: 0.55; }
+  .year-badge.y2 { border-color: #1c1c1c; color: #1c1c1c; }
+
+  .slider-wrap { flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 6px; }
+
+  input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 2px;
+    background: #ccc;
+    outline: none;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #1c1c1c;
+    cursor: pointer;
+  }
+
+  .slider-marks {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #aaa;
+    letter-spacing: 0.03em;
+  }
+
+  .slider-marks span.active { color: #1c1c1c; font-weight: 500; }
+
+  /* COUNTRY SELECT */
+  .country-wrap { grid-column: 1 / -1; }
+
+  select {
+    width: 100%;
+    padding: 8px 10px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+  }
+
+  /* CHART */
+  #scatter { width: 100%; height: 520px; }
+
+  /* CAPTION */
+  .caption {
+    font-size: 11px;
+    color: #999;
+    margin-top: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  /* FINDINGS */
+  .findings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+  }
+
+  .finding {
+    border-left: 3px solid #1c1c1c;
+    padding-left: 16px;
+  }
+
+  .finding-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #1c1c1c;
+  }
+
+  .finding p { font-size: 13px; line-height: 1.65; color: #555; margin: 0; }
+
+  /* SOURCE */
+  .source-line {
+    border-top: 1px solid #ddd;
+    padding-top: 16px;
+    font-size: 12px;
+    color: #999;
+  }
+
+  .source-line a { color: #555; }
+
+  @media (max-width: 640px) {
+    .controls { grid-template-columns: 1fr; }
+    .year-row { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="kicker">Data Journalism &nbsp;·&nbsp; GRAD-E1493 &nbsp;·&nbsp; Spring 2026</div>
+    <h1>Is Europe Converging? Comparing Living Standards Across the Continent</h1>
+    <p class="deck">Comparing living standards across countries is one of the most deceptively difficult tasks in economics. A salary of €2,000 per month means something very different in Bucharest than it does in Copenhagen. Raw numbers — wages, prices, GDP — rarely tell the full story on their own. This tool brings together four key indicators from Eurostat to make those comparisons more transparent.</p>
+    <div class="byline">Source: Eurostat &nbsp;·&nbsp; Data: 2015–2024 &nbsp;·&nbsp; EU27 = 100 where indexed</div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="section">
+    <p>To understand whether people in one country are truly better or worse off than those in another, you need to look at multiple dimensions at once: how much things cost, how much people earn, how fast prices are rising, and how productive the overall economy is. Even then, the picture keeps shifting — a country that looked affordable a decade ago may have caught up considerably, or fallen further behind.</p>
+    <p>The interactive chart below lets you place any two of four indicators on a scatter plot, compare two different years side by side, and filter to the countries you care about. Blue dots represent the more recent year; faded red dots the earlier year. Lines connecting them show the direction of change.</p>
+  </div>
+
+  <!-- INDICATORS -->
+  <div class="section">
+    <h2>About the indicators</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">Indicator 01</div>
+        <div class="card-name">Price Level Index (PLI)</div>
+        <p>Measures how expensive a country is relative to the EU27 average, set to 100. A value of 130 means prices are 30% above the EU average. Calculated by Eurostat using a harmonised basket of comparable goods and services across all member states.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Indicator 02</div>
+        <div class="card-name">GDP per Capita (PPS)</div>
+        <p>Economic output per person, adjusted for price differences using Purchasing Power Standards. The EU27 average equals 100. Removes the distortion caused by comparing nominal figures across economies with very different cost structures.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Indicator 03</div>
+        <div class="card-name">Median Income (PPS)</div>
+        <p>The income of the middle person in a country's income distribution, expressed in purchasing-power-adjusted euros. Unlike average income, the median is not distorted by very high earners and better reflects what a typical household actually takes home.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Indicator 04</div>
+        <div class="card-name">HICP Inflation (%)</div>
+        <p>The Harmonised Index of Consumer Prices tracks the annual change in a standardised basket of consumer goods. Because the methodology is identical across all EU countries, it allows direct comparison of how quickly prices rose or fell in any given year.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLS + CHART -->
+  <div class="section">
+    <h2>Explore the data</h2>
+
+    <div class="controls">
+      <div class="control-group">
+        <label>X axis &mdash; <span id="x-label" style="color:#1c1c1c;font-weight:500">GDP per Capita (PPS)</span></label>
+        <div class="btn-row" id="x-btns"></div>
+      </div>
+      <div class="control-group">
+        <label>Y axis &mdash; <span id="y-label" style="color:#c0392b;font-weight:500">Price Level Index</span></label>
+        <div class="btn-row" id="y-btns"></div>
+      </div>
+
+      <div class="year-row">
+        <div class="year-display">
+          <div class="year-badge y1" id="y1-badge">2015</div>
+          <span style="color:#aaa;font-size:12px;">vs</span>
+          <div class="year-badge y2" id="y2-badge">2024</div>
+        </div>
+        <div class="slider-wrap">
+          <div style="display:flex;gap:16px;">
+            <div style="flex:1">
+              <div style="font-size:10px;color:#aaa;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Earlier year</div>
+              <input type="range" id="slider1" min="2015" max="2024" value="2015" step="1">
+            </div>
+            <div style="flex:1">
+              <div style="font-size:10px;color:#aaa;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Later year</div>
+              <input type="range" id="slider2" min="2015" max="2024" value="2024" step="1">
+            </div>
+          </div>
+          <div class="slider-marks" id="year-marks"></div>
+        </div>
+      </div>
+
+      <div class="country-wrap">
+        <label style="font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:#888;display:block;margin-bottom:6px;">Filter countries (hold Ctrl/Cmd to select multiple)</label>
+        <select id="country-select" multiple size="5"></select>
+      </div>
+    </div>
+
+    <div id="scatter"></div>
+    <div class="caption">Blue dots = later year &nbsp;·&nbsp; Faded red dots = earlier year &nbsp;·&nbsp; Lines show direction of change &nbsp;·&nbsp; Hover for details</div>
+  </div>
+
+  <!-- FINDINGS -->
+  <div class="section">
+    <h2>What the data reveals</h2>
+    <div class="findings-grid">
+      <div class="finding">
+        <div class="finding-title">The East–West price gap is narrowing</div>
+        <p>A decade ago, countries like Bulgaria, Romania and Poland had price levels around 50% below the EU average. That gap has been closing steadily. Compare PLI across years to see how Eastern European economies have been converging toward Western price levels — even as wage convergence has lagged behind.</p>
+      </div>
+      <div class="finding">
+        <div class="finding-title">When GDP lies: the Irish anomaly</div>
+        <p>Plot GDP against Median Income and look for Ireland. Its GDP per capita (PPS) is among the highest in Europe — but its median income tells a more modest story. Multinational companies book profits in Ireland, inflating GDP far beyond what Irish households actually earn. GDP alone can be a poor proxy for living standards.</p>
+      </div>
+      <div class="finding">
+        <div class="finding-title">The 2022 inflation shock hit unevenly</div>
+        <p>Set the year range to 2021–2023 and plot HICP against PLI. The Baltic states — Estonia, Latvia and Lithuania — experienced some of the highest inflation rates in the EU, exceeding 15–20% at the peak. Meanwhile, countries like France and Switzerland remained comparatively stable.</p>
+      </div>
+      <div class="finding">
+        <div class="finding-title">Luxembourg: the continent's perennial outlier</div>
+        <p>Luxembourg consistently appears as an extreme outlier in almost every combination of metrics. It has the highest GDP per capita, among the highest price levels, and the highest median incomes in Europe by a wide margin. Try filtering it out to see how the rest of Europe clusters.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOURCE -->
+  <div class="source-line">
+    Data source: <a href="https://ec.europa.eu/eurostat" target="_blank">Eurostat</a> — prc_ppp_ind (PLI), nama_10_pc (GDP per capita, PPS), ilc_di03 (Median income), prc_hicp_aind (HICP inflation). All figures refer to annual data. GDP and PLI are indexed to EU27 = 100.
+  </div>
+
+</div>
+
+<script>
+const RAW = 
+[{"geo": "Albania", "year": 2015, "pli": 48.3, "gdp_pps": 30.0, "hicp": null, "median_income": null}, {"geo": "Albania", "year": 2016, "pli": 51.1, "gdp_pps": 30.0, "hicp": null, "median_income": null}, {"geo": "Albania", "year": 2017, "pli": 52.4, "gdp_pps": 30.0, "hicp": null, "median_income": 3589}, {"geo": "Albania", "year": 2018, "pli": 55.9, "gdp_pps": 30.0, "hicp": 1.8, "median_income": 4003}, {"geo": "Albania", "year": 2019, "pli": 58.3, "gdp_pps": 30.0, "hicp": 1.7, "median_income": 4252}, {"geo": "Albania", "year": 2020, "pli": 59.4, "gdp_pps": 30.0, "hicp": 2.2, "median_income": 4385}, {"geo": "Albania", "year": 2021, "pli": 61.6, "gdp_pps": 31.0, "hicp": 2.3, "median_income": 4275}, {"geo": "Albania", "year": 2022, "pli": 61.9, "gdp_pps": 33.0, "hicp": 6.6, "median_income": 5098}, {"geo": "Albania", "year": 2023, "pli": 65.2, "gdp_pps": 38.0, "hicp": 5.3, "median_income": 6174}, {"geo": "Albania", "year": 2024, "pli": 70.6, "gdp_pps": 42.0, "hicp": 2.6, "median_income": null}, {"geo": "Austria", "year": 2015, "pli": 109.3, "gdp_pps": 128.0, "hicp": 0.8, "median_income": 21981}, {"geo": "Austria", "year": 2016, "pli": 110.4, "gdp_pps": 128.0, "hicp": 1.0, "median_income": 23071}, {"geo": "Austria", "year": 2017, "pli": 111.6, "gdp_pps": 125.0, "hicp": 2.2, "median_income": 23361}, {"geo": "Austria", "year": 2018, "pli": 112.1, "gdp_pps": 126.0, "hicp": 2.1, "median_income": 23204}, {"geo": "Austria", "year": 2019, "pli": 113.2, "gdp_pps": 124.0, "hicp": 1.5, "median_income": 23687}, {"geo": "Austria", "year": 2020, "pli": 111.7, "gdp_pps": 123.0, "hicp": 1.4, "median_income": 23334}, {"geo": "Austria", "year": 2021, "pli": 108.5, "gdp_pps": 121.0, "hicp": 2.8, "median_income": 24450}, {"geo": "Austria", "year": 2022, "pli": 107.9, "gdp_pps": 123.0, "hicp": 8.6, "median_income": 25119}, {"geo": "Austria", "year": 2023, "pli": 111.5, "gdp_pps": 121.0, "hicp": 7.7, "median_income": 28690}, {"geo": "Austria", "year": 2024, "pli": 111.7, "gdp_pps": 119.0, "hicp": 2.9, "median_income": 29758}, {"geo": "Belgium", "year": 2015, "pli": 111.2, "gdp_pps": 119.0, "hicp": 0.6, "median_income": 19921}, {"geo": "Belgium", "year": 2016, "pli": 113.3, "gdp_pps": 118.0, "hicp": 1.8, "median_income": 21335}, {"geo": "Belgium", "year": 2017, "pli": 114.3, "gdp_pps": 117.0, "hicp": 2.2, "median_income": 20904}, {"geo": "Belgium", "year": 2018, "pli": 114.7, "gdp_pps": 116.0, "hicp": 2.3, "median_income": 21353}, {"geo": "Belgium", "year": 2019, "pli": 114.9, "gdp_pps": 117.0, "hicp": 1.3, "median_income": 22141}, {"geo": "Belgium", "year": 2020, "pli": 113.6, "gdp_pps": 118.0, "hicp": 0.4, "median_income": 22391}, {"geo": "Belgium", "year": 2021, "pli": 115.5, "gdp_pps": 117.0, "hicp": 3.2, "median_income": 22768}, {"geo": "Belgium", "year": 2022, "pli": 117.4, "gdp_pps": 118.0, "hicp": 10.3, "median_income": 24159}, {"geo": "Belgium", "year": 2023, "pli": 116.9, "gdp_pps": 118.0, "hicp": 2.3, "median_income": 25150}, {"geo": "Belgium", "year": 2024, "pli": 116.7, "gdp_pps": 117.0, "hicp": 4.3, "median_income": 26361}, {"geo": "Bosnia and Herzegovina", "year": 2015, "pli": 53.8, "gdp_pps": 31.0, "hicp": null, "median_income": null}, {"geo": "Bosnia and Herzegovina", "year": 2016, "pli": 53.3, "gdp_pps": 31.0, "hicp": null, "median_income": null}, {"geo": "Bosnia and Herzegovina", "year": 2017, "pli": 54.5, "gdp_pps": 31.0, "hicp": null, "median_income": null}, {"geo": "Bosnia and Herzegovina", "year": 2018, "pli": 54.8, "gdp_pps": 32.0, "hicp": null, "median_income": null}, {"geo": "Bosnia and Herzegovina", "year": 2019, "pli": 54.8, "gdp_pps": 32.0, "hicp": null, "median_income": null}, {"geo": "Bosnia and Herzegovina", "year": 2020, "pli": 56.1, "gdp_pps": 33.0, "hicp": null, "median_income": null}, {"geo": "Bosnia and Herzegovina", "year": 2021, "pli": 56.2, "gdp_pps": 33.0, "hicp": null, "median_income": null}, {"geo": "Bosnia and Herzegovina", "year": 2022, "pli": 58.4, "gdp_pps": 34.0, "hicp": null, "median_income": null}, {"geo": "Bosnia and Herzegovina", "year": 2023, "pli": 58.5, "gdp_pps": 35.0, "hicp": null, "median_income": null}, {"geo": "Bosnia and Herzegovina", "year": 2024, "pli": 58.4, "gdp_pps": 35.0, "hicp": null, "median_income": null}, {"geo": "Bulgaria", "year": 2015, "pli": 49.7, "gdp_pps": 49.0, "hicp": -1.1, "median_income": 6882}, {"geo": "Bulgaria", "year": 2016, "pli": 49.7, "gdp_pps": 51.0, "hicp": -1.3, "median_income": 6742}, {"geo": "Bulgaria", "year": 2017, "pli": 51.2, "gdp_pps": 52.0, "hicp": 1.2, "median_income": 7533}, {"geo": "Bulgaria", "year": 2018, "pli": 51.9, "gdp_pps": 53.0, "hicp": 2.6, "median_income": 7218}, {"geo": "Bulgaria", "year": 2019, "pli": 53.6, "gdp_pps": 55.0, "hicp": 2.5, "median_income": 8371}, {"geo": "Bulgaria", "year": 2020, "pli": 55.2, "gdp_pps": 57.0, "hicp": 1.2, "median_income": 8647}, {"geo": "Bulgaria", "year": 2021, "pli": 55.5, "gdp_pps": 60.0, "hicp": 2.8, "median_income": 9375}, {"geo": "Bulgaria", "year": 2022, "pli": 58.2, "gdp_pps": 62.0, "hicp": 13.0, "median_income": 9671}, {"geo": "Bulgaria", "year": 2023, "pli": 59.2, "gdp_pps": 63.0, "hicp": 8.6, "median_income": 11155}, {"geo": "Bulgaria", "year": 2024, "pli": 60.5, "gdp_pps": 66.0, "hicp": 2.6, "median_income": 13079}, {"geo": "Croatia", "year": 2015, "pli": 67.8, "gdp_pps": 61.0, "hicp": -0.3, "median_income": 8253}, {"geo": "Croatia", "year": 2016, "pli": 68.5, "gdp_pps": 62.0, "hicp": -0.6, "median_income": 8985}, {"geo": "Croatia", "year": 2017, "pli": 69.2, "gdp_pps": 63.0, "hicp": 1.3, "median_income": 9444}, {"geo": "Croatia", "year": 2018, "pli": 70.6, "gdp_pps": 64.0, "hicp": 1.6, "median_income": 9870}, {"geo": "Croatia", "year": 2019, "pli": 71.3, "gdp_pps": 67.0, "hicp": 0.8, "median_income": 10734}, {"geo": "Croatia", "year": 2020, "pli": 70.7, "gdp_pps": 66.0, "hicp": 0.0, "median_income": 11090}, {"geo": "Croatia", "year": 2021, "pli": 69.4, "gdp_pps": 70.0, "hicp": 2.7, "median_income": 11385}, {"geo": "Croatia", "year": 2022, "pli": 73.1, "gdp_pps": 72.0, "hicp": 10.7, "median_income": 12277}, {"geo": "Croatia", "year": 2023, "pli": 74.9, "gdp_pps": 78.0, "hicp": 8.4, "median_income": 13438}, {"geo": "Croatia", "year": 2024, "pli": 76.6, "gdp_pps": 78.0, "hicp": 4.0, "median_income": 16277}, {"geo": "Cyprus", "year": 2015, "pli": 92.2, "gdp_pps": 81.0, "hicp": -1.5, "median_income": 15313}, {"geo": "Cyprus", "year": 2016, "pli": 89.5, "gdp_pps": 86.0, "hicp": -1.2, "median_income": 16173}, {"geo": "Cyprus", "year": 2017, "pli": 89.8, "gdp_pps": 88.0, "hicp": 0.7, "median_income": 16877}, {"geo": "Cyprus", "year": 2018, "pli": 90.9, "gdp_pps": 89.0, "hicp": 0.8, "median_income": 17505}, {"geo": "Cyprus", "year": 2019, "pli": 91.3, "gdp_pps": 91.0, "hicp": 0.5, "median_income": 18844}, {"geo": "Cyprus", "year": 2020, "pli": 90.7, "gdp_pps": 89.0, "hicp": -1.1, "median_income": 18652}, {"geo": "Cyprus", "year": 2021, "pli": 92.6, "gdp_pps": 92.0, "hicp": 2.3, "median_income": 18629}, {"geo": "Cyprus", "year": 2022, "pli": 93.3, "gdp_pps": 95.0, "hicp": 8.1, "median_income": 19891}, {"geo": "Cyprus", "year": 2023, "pli": 92.1, "gdp_pps": 97.0, "hicp": 3.9, "median_income": 20917}, {"geo": "Cyprus", "year": 2024, "pli": 91.6, "gdp_pps": 99.0, "hicp": 2.3, "median_income": 22817}, {"geo": "Czechia", "year": 2015, "pli": 66.8, "gdp_pps": 89.0, "hicp": 0.3, "median_income": 11652}, {"geo": "Czechia", "year": 2016, "pli": 68.3, "gdp_pps": 89.0, "hicp": 0.7, "median_income": 12478}, {"geo": "Czechia", "year": 2017, "pli": 70.5, "gdp_pps": 92.0, "hicp": 2.5, "median_income": 12641}, {"geo": "Czechia", "year": 2018, "pli": 74.0, "gdp_pps": 93.0, "hicp": 1.9, "median_income": 13264}, {"geo": "Czechia", "year": 2019, "pli": 75.1, "gdp_pps": 95.0, "hicp": 2.6, "median_income": 14035}, {"geo": "Czechia", "year": 2020, "pli": 76.3, "gdp_pps": 96.0, "hicp": 3.3, "median_income": 14151}, {"geo": "Czechia", "year": 2021, "pli": 83.3, "gdp_pps": 92.0, "hicp": 3.3, "median_income": 13815}, {"geo": "Czechia", "year": 2022, "pli": 89.6, "gdp_pps": 90.0, "hicp": 14.8, "median_income": 15354}, {"geo": "Czechia", "year": 2023, "pli": 91.7, "gdp_pps": 91.0, "hicp": 12.0, "median_income": 16208}, {"geo": "Czechia", "year": 2024, "pli": 88.5, "gdp_pps": 91.0, "hicp": 2.7, "median_income": 16972}, {"geo": "Denmark", "year": 2015, "pli": 142.8, "gdp_pps": 127.0, "hicp": 0.2, "median_income": 20384}, {"geo": "Denmark", "year": 2016, "pli": 146.1, "gdp_pps": 126.0, "hicp": 0.0, "median_income": 21355}, {"geo": "Denmark", "year": 2017, "pli": 143.1, "gdp_pps": 128.0, "hicp": 1.1, "median_income": 20955}, {"geo": "Denmark", "year": 2018, "pli": 141.4, "gdp_pps": 127.0, "hicp": 0.7, "median_income": 21646}, {"geo": "Denmark", "year": 2019, "pli": 143.4, "gdp_pps": 125.0, "hicp": 0.7, "median_income": 22371}, {"geo": "Denmark", "year": 2020, "pli": 142.6, "gdp_pps": 132.0, "hicp": 0.3, "median_income": 21796}, {"geo": "Denmark", "year": 2021, "pli": 140.8, "gdp_pps": 133.0, "hicp": 1.9, "median_income": 22899}, {"geo": "Denmark", "year": 2022, "pli": 146.3, "gdp_pps": 134.0, "hicp": 8.6, "median_income": 23244}, {"geo": "Denmark", "year": 2023, "pli": 141.6, "gdp_pps": 126.0, "hicp": 3.4, "median_income": 22820}, {"geo": "Denmark", "year": 2024, "pli": 140.7, "gdp_pps": 127.0, "hicp": 1.3, "median_income": 24297}, {"geo": "Estonia", "year": 2015, "pli": 77.5, "gdp_pps": 77.0, "hicp": 0.1, "median_income": 10432}, {"geo": "Estonia", "year": 2016, "pli": 78.8, "gdp_pps": 78.0, "hicp": 0.8, "median_income": 11867}, {"geo": "Estonia", "year": 2017, "pli": 80.9, "gdp_pps": 80.0, "hicp": 3.7, "median_income": 12414}, {"geo": "Estonia", "year": 2018, "pli": 83.0, "gdp_pps": 82.0, "hicp": 3.4, "median_income": 13378}, {"geo": "Estonia", "year": 2019, "pli": 84.9, "gdp_pps": 84.0, "hicp": 2.3, "median_income": 14240}, {"geo": "Estonia", "year": 2020, "pli": 86.0, "gdp_pps": 85.0, "hicp": -0.6, "median_income": 14331}, {"geo": "Estonia", "year": 2021, "pli": 91.1, "gdp_pps": 85.0, "hicp": 4.5, "median_income": 14810}, {"geo": "Estonia", "year": 2022, "pli": 99.6, "gdp_pps": 83.0, "hicp": 19.4, "median_income": 17064}, {"geo": "Estonia", "year": 2023, "pli": 99.8, "gdp_pps": 80.0, "hicp": 9.1, "median_income": 15492}, {"geo": "Estonia", "year": 2024, "pli": 100.2, "gdp_pps": 79.0, "hicp": 3.7, "median_income": 16482}, {"geo": "Finland", "year": 2015, "pli": 125.8, "gdp_pps": 109.0, "hicp": -0.2, "median_income": 19430}, {"geo": "Finland", "year": 2016, "pli": 126.1, "gdp_pps": 109.0, "hicp": 0.4, "median_income": 19997}, {"geo": "Finland", "year": 2017, "pli": 125.1, "gdp_pps": 110.0, "hicp": 0.8, "median_income": 19827}, {"geo": "Finland", "year": 2018, "pli": 125.7, "gdp_pps": 109.0, "hicp": 1.2, "median_income": 20048}, {"geo": "Finland", "year": 2019, "pli": 126.3, "gdp_pps": 107.0, "hicp": 1.1, "median_income": 20362}, {"geo": "Finland", "year": 2020, "pli": 126.4, "gdp_pps": 112.0, "hicp": 0.4, "median_income": 20290}, {"geo": "Finland", "year": 2021, "pli": 125.8, "gdp_pps": 109.0, "hicp": 2.1, "median_income": 20078}, {"geo": "Finland", "year": 2022, "pli": 125.1, "gdp_pps": 106.0, "hicp": 7.2, "median_income": 20941}, {"geo": "Finland", "year": 2023, "pli": 123.8, "gdp_pps": 103.0, "hicp": 4.3, "median_income": 21691}, {"geo": "Finland", "year": 2024, "pli": 122.3, "gdp_pps": 102.0, "hicp": 1.0, "median_income": 23055}, {"geo": "France", "year": 2015, "pli": 112.0, "gdp_pps": 106.0, "hicp": 0.1, "median_income": 19885}, {"geo": "France", "year": 2016, "pli": 112.4, "gdp_pps": 105.0, "hicp": 0.3, "median_income": 20621}, {"geo": "France", "year": 2017, "pli": 113.0, "gdp_pps": 103.0, "hicp": 1.2, "median_income": 20357}, {"geo": "France", "year": 2018, "pli": 113.9, "gdp_pps": 103.0, "hicp": 2.1, "median_income": 20223}, {"geo": "France", "year": 2019, "pli": 113.4, "gdp_pps": 105.0, "hicp": 1.3, "median_income": 20471}, {"geo": "France", "year": 2020, "pli": 112.9, "gdp_pps": 104.0, "hicp": 0.5, "median_income": 19518}, {"geo": "France", "year": 2021, "pli": 114.3, "gdp_pps": 101.0, "hicp": 2.1, "median_income": 20100}, {"geo": "France", "year": 2022, "pli": 112.2, "gdp_pps": 97.0, "hicp": 5.9, "median_income": 20575}, {"geo": "France", "year": 2023, "pli": 111.7, "gdp_pps": 99.0, "hicp": 5.7, "median_income": 21875}, {"geo": "France", "year": 2024, "pli": 111.2, "gdp_pps": 98.0, "hicp": 2.3, "median_income": 23222}, {"geo": "Germany", "year": 2015, "pli": 107.0, "gdp_pps": 126.0, "hicp": 0.7, "median_income": 20365}, {"geo": "Germany", "year": 2016, "pli": 107.1, "gdp_pps": 126.0, "hicp": 0.4, "median_income": 21152}, {"geo": "Germany", "year": 2017, "pli": 106.5, "gdp_pps": 126.0, "hicp": 1.7, "median_income": 21331}, {"geo": "Germany", "year": 2018, "pli": 105.8, "gdp_pps": 125.0, "hicp": 1.9, "median_income": 21980}, {"geo": "Germany", "year": 2019, "pli": 107.0, "gdp_pps": 122.0, "hicp": 1.4, "median_income": 22693}, {"geo": "Germany", "year": 2020, "pli": 106.9, "gdp_pps": 123.0, "hicp": 0.4, "median_income": 24229}, {"geo": "Germany", "year": 2021, "pli": 107.2, "gdp_pps": 120.0, "hicp": 3.2, "median_income": 23336}, {"geo": "Germany", "year": 2022, "pli": 108.4, "gdp_pps": 120.0, "hicp": 8.7, "median_income": 23127}, {"geo": "Germany", "year": 2023, "pli": 109.0, "gdp_pps": 118.0, "hicp": 6.0, "median_income": 24086}, {"geo": "Germany", "year": 2024, "pli": 108.8, "gdp_pps": 116.0, "hicp": 2.5, "median_income": 25192}, {"geo": "Greece", "year": 2015, "pli": 88.2, "gdp_pps": 69.0, "hicp": -1.1, "median_income": 8802}, {"geo": "Greece", "year": 2016, "pli": 87.7, "gdp_pps": 67.0, "hicp": 0.0, "median_income": 9048}, {"geo": "Greece", "year": 2017, "pli": 86.9, "gdp_pps": 67.0, "hicp": 1.1, "median_income": 9035}, {"geo": "Greece", "year": 2018, "pli": 86.8, "gdp_pps": 66.0, "hicp": 0.8, "median_income": 9245}, {"geo": "Greece", "year": 2019, "pli": 86.9, "gdp_pps": 66.0, "hicp": 0.5, "median_income": 9765}, {"geo": "Greece", "year": 2020, "pli": 88.4, "gdp_pps": 62.0, "hicp": -1.3, "median_income": 10175}, {"geo": "Greece", "year": 2021, "pli": 87.3, "gdp_pps": 64.0, "hicp": 0.6, "median_income": 9917}, {"geo": "Greece", "year": 2022, "pli": 87.4, "gdp_pps": 66.0, "hicp": 9.3, "median_income": 10841}, {"geo": "Greece", "year": 2023, "pli": 85.8, "gdp_pps": 68.0, "hicp": 4.2, "median_income": 11389}, {"geo": "Greece", "year": 2024, "pli": 86.5, "gdp_pps": 69.0, "hicp": 3.0, "median_income": 12436}, {"geo": "Hungary", "year": 2015, "pli": 61.4, "gdp_pps": 70.0, "hicp": 0.1, "median_income": 7919}, {"geo": "Hungary", "year": 2016, "pli": 62.4, "gdp_pps": 69.0, "hicp": 0.4, "median_income": 8267}, {"geo": "Hungary", "year": 2017, "pli": 65.9, "gdp_pps": 69.0, "hicp": 2.4, "median_income": 8332}, {"geo": "Hungary", "year": 2018, "pli": 65.9, "gdp_pps": 72.0, "hicp": 2.9, "median_income": 8603}, {"geo": "Hungary", "year": 2019, "pli": 67.4, "gdp_pps": 73.0, "hicp": 3.4, "median_income": 9344}, {"geo": "Hungary", "year": 2020, "pli": 66.3, "gdp_pps": 75.0, "hicp": 3.4, "median_income": 9056}, {"geo": "Hungary", "year": 2021, "pli": 68.2, "gdp_pps": 75.0, "hicp": 5.2, "median_income": 9960}, {"geo": "Hungary", "year": 2022, "pli": 67.7, "gdp_pps": 76.0, "hicp": 15.3, "median_income": 10620}, {"geo": "Hungary", "year": 2023, "pli": 74.2, "gdp_pps": 76.0, "hicp": 17.0, "median_income": 10913}, {"geo": "Hungary", "year": 2024, "pli": 74.3, "gdp_pps": 76.0, "hicp": 3.7, "median_income": 11199}, {"geo": "Iceland", "year": 2015, "pli": 136.1, "gdp_pps": 131.0, "hicp": null, "median_income": 20804}, {"geo": "Iceland", "year": 2016, "pli": 158.8, "gdp_pps": 135.0, "hicp": null, "median_income": 22193}, {"geo": "Iceland", "year": 2017, "pli": 174.2, "gdp_pps": 133.0, "hicp": null, "median_income": 22230}, {"geo": "Iceland", "year": 2018, "pli": 168.4, "gdp_pps": 131.0, "hicp": 0.7, "median_income": 23667}, {"geo": "Iceland", "year": 2019, "pli": 161.8, "gdp_pps": 129.0, "hicp": 2.0, "median_income": 23621}, {"geo": "Iceland", "year": 2020, "pli": 142.7, "gdp_pps": 123.0, "hicp": 1.2, "median_income": 22645}, {"geo": "Iceland", "year": 2021, "pli": 149.8, "gdp_pps": 124.0, "hicp": 3.7, "median_income": null}, {"geo": "Iceland", "year": 2022, "pli": 159.8, "gdp_pps": 135.0, "hicp": 5.7, "median_income": null}, {"geo": "Iceland", "year": 2023, "pli": 157.4, "gdp_pps": 136.0, "hicp": 8.0, "median_income": null}, {"geo": "Iceland", "year": 2024, "pli": 162.1, "gdp_pps": 131.0, "hicp": 4.5, "median_income": null}, {"geo": "Ireland", "year": 2015, "pli": 128.3, "gdp_pps": 185.0, "hicp": 0.0, "median_income": 17656}, {"geo": "Ireland", "year": 2016, "pli": 129.3, "gdp_pps": 178.0, "hicp": -0.2, "median_income": 18397}, {"geo": "Ireland", "year": 2017, "pli": 131.5, "gdp_pps": 187.0, "hicp": 0.3, "median_income": 18198}, {"geo": "Ireland", "year": 2018, "pli": 134.1, "gdp_pps": 192.0, "hicp": 0.7, "median_income": 19464}, {"geo": "Ireland", "year": 2019, "pli": 136.3, "gdp_pps": 190.0, "hicp": 0.9, "median_income": 19692}, {"geo": "Ireland", "year": 2020, "pli": 141.7, "gdp_pps": 205.0, "hicp": -0.5, "median_income": 19720}, {"geo": "Ireland", "year": 2021, "pli": 138.3, "gdp_pps": 225.0, "hicp": 2.4, "median_income": 20551}, {"geo": "Ireland", "year": 2022, "pli": 136.9, "gdp_pps": 237.0, "hicp": 8.1, "median_income": 20904}, {"geo": "Ireland", "year": 2023, "pli": 137.6, "gdp_pps": 218.0, "hicp": 5.2, "median_income": 21568}, {"geo": "Ireland", "year": 2024, "pli": 136.8, "gdp_pps": 221.0, "hicp": 1.3, "median_income": 23288}, {"geo": "Italy", "year": 2015, "pli": 106.4, "gdp_pps": 97.0, "hicp": 0.2, "median_income": 15395}, {"geo": "Italy", "year": 2016, "pli": 104.3, "gdp_pps": 99.0, "hicp": -0.1, "median_income": 16237}, {"geo": "Italy", "year": 2017, "pli": 103.7, "gdp_pps": 98.0, "hicp": 1.3, "median_income": 16522}, {"geo": "Italy", "year": 2018, "pli": 103.3, "gdp_pps": 97.0, "hicp": 1.2, "median_income": 16715}, {"geo": "Italy", "year": 2019, "pli": 101.6, "gdp_pps": 96.0, "hicp": 0.7, "median_income": 17099}, {"geo": "Italy", "year": 2020, "pli": 101.7, "gdp_pps": 93.0, "hicp": -0.2, "median_income": 17764}, {"geo": "Italy", "year": 2021, "pli": 101.0, "gdp_pps": 96.0, "hicp": 2.0, "median_income": 17304}, {"geo": "Italy", "year": 2022, "pli": 99.5, "gdp_pps": 98.0, "hicp": 8.7, "median_income": 18472}, {"geo": "Italy", "year": 2023, "pli": 98.0, "gdp_pps": 98.0, "hicp": 5.9, "median_income": 19691}, {"geo": "Italy", "year": 2024, "pli": 97.0, "gdp_pps": 98.0, "hicp": 1.1, "median_income": 20804}, {"geo": "Latvia", "year": 2015, "pli": 73.1, "gdp_pps": 62.0, "hicp": 0.2, "median_income": 8092}, {"geo": "Latvia", "year": 2016, "pli": 74.5, "gdp_pps": 63.0, "hicp": 0.1, "median_income": 9257}, {"geo": "Latvia", "year": 2017, "pli": 74.9, "gdp_pps": 64.0, "hicp": 2.9, "median_income": 9248}, {"geo": "Latvia", "year": 2018, "pli": 76.7, "gdp_pps": 66.0, "hicp": 2.6, "median_income": 10031}, {"geo": "Latvia", "year": 2019, "pli": 77.9, "gdp_pps": 66.0, "hicp": 2.7, "median_income": 11031}, {"geo": "Latvia", "year": 2020, "pli": 78.5, "gdp_pps": 69.0, "hicp": 0.1, "median_income": 11339}, {"geo": "Latvia", "year": 2021, "pli": 75.2, "gdp_pps": 71.0, "hicp": 3.2, "median_income": 11975}, {"geo": "Latvia", "year": 2022, "pli": 80.8, "gdp_pps": 69.0, "hicp": 17.2, "median_income": 12845}, {"geo": "Latvia", "year": 2023, "pli": 82.7, "gdp_pps": 70.0, "hicp": 9.1, "median_income": 13228}, {"geo": "Latvia", "year": 2024, "pli": 82.7, "gdp_pps": 68.0, "hicp": 1.3, "median_income": 14721}, {"geo": "Lithuania", "year": 2015, "pli": 64.1, "gdp_pps": 75.0, "hicp": -0.7, "median_income": 8251}, {"geo": "Lithuania", "year": 2016, "pli": 65.1, "gdp_pps": 75.0, "hicp": 0.7, "median_income": 9364}, {"geo": "Lithuania", "year": 2017, "pli": 66.1, "gdp_pps": 78.0, "hicp": 3.7, "median_income": 9819}, {"geo": "Lithuania", "year": 2018, "pli": 67.5, "gdp_pps": 81.0, "hicp": 2.5, "median_income": 10702}, {"geo": "Lithuania", "year": 2019, "pli": 68.0, "gdp_pps": 83.0, "hicp": 2.2, "median_income": 11509}, {"geo": "Lithuania", "year": 2020, "pli": 69.9, "gdp_pps": 87.0, "hicp": 1.1, "median_income": 12546}, {"geo": "Lithuania", "year": 2021, "pli": 71.6, "gdp_pps": 88.0, "hicp": 4.6, "median_income": 13742}, {"geo": "Lithuania", "year": 2022, "pli": 79.3, "gdp_pps": 87.0, "hicp": 18.9, "median_income": 14202}, {"geo": "Lithuania", "year": 2023, "pli": 82.9, "gdp_pps": 86.0, "hicp": 8.7, "median_income": 14312}, {"geo": "Lithuania", "year": 2024, "pli": 81.7, "gdp_pps": 87.0, "hicp": 0.9, "median_income": 15110}, {"geo": "Luxembourg", "year": 2015, "pli": 125.5, "gdp_pps": 279.0, "hicp": 0.1, "median_income": 29285}, {"geo": "Luxembourg", "year": 2016, "pli": 127.9, "gdp_pps": 276.0, "hicp": 0.0, "median_income": 27834}, {"geo": "Luxembourg", "year": 2017, "pli": 128.8, "gdp_pps": 266.0, "hicp": 2.1, "median_income": 29596}, {"geo": "Luxembourg", "year": 2018, "pli": 126.9, "gdp_pps": 258.0, "hicp": 2.0, "median_income": 27529}, {"geo": "Luxembourg", "year": 2019, "pli": 132.0, "gdp_pps": 249.0, "hicp": 1.7, "median_income": 28943}, {"geo": "Luxembourg", "year": 2020, "pli": 137.3, "gdp_pps": 256.0, "hicp": 0.0, "median_income": 28675}, {"geo": "Luxembourg", "year": 2021, "pli": 138.7, "gdp_pps": 263.0, "hicp": 3.5, "median_income": 32132}, {"geo": "Luxembourg", "year": 2022, "pli": 134.7, "gdp_pps": 250.0, "hicp": 8.2, "median_income": 33214}, {"geo": "Luxembourg", "year": 2023, "pli": 131.9, "gdp_pps": 248.0, "hicp": 2.9, "median_income": 34777}, {"geo": "Luxembourg", "year": 2024, "pli": 131.1, "gdp_pps": 245.0, "hicp": 2.3, "median_income": 37781}, {"geo": "Malta", "year": 2015, "pli": 83.9, "gdp_pps": 99.0, "hicp": 1.2, "median_income": 16753}, {"geo": "Malta", "year": 2016, "pli": 84.5, "gdp_pps": 100.0, "hicp": 0.9, "median_income": 17264}, {"geo": "Malta", "year": 2017, "pli": 86.3, "gdp_pps": 106.0, "hicp": 1.3, "median_income": 17899}, {"geo": "Malta", "year": 2018, "pli": 86.5, "gdp_pps": 107.0, "hicp": 1.7, "median_income": 17932}, {"geo": "Malta", "year": 2019, "pli": 86.5, "gdp_pps": 106.0, "hicp": 1.5, "median_income": 18588}, {"geo": "Malta", "year": 2020, "pli": 89.6, "gdp_pps": 105.0, "hicp": 0.8, "median_income": 18756}, {"geo": "Malta", "year": 2021, "pli": 91.6, "gdp_pps": 109.0, "hicp": 0.7, "median_income": 19012}, {"geo": "Malta", "year": 2022, "pli": 90.5, "gdp_pps": 103.0, "hicp": 6.1, "median_income": 20698}, {"geo": "Malta", "year": 2023, "pli": 89.3, "gdp_pps": 109.0, "hicp": 5.6, "median_income": 21060}, {"geo": "Malta", "year": 2024, "pli": 90.6, "gdp_pps": 110.0, "hicp": 2.4, "median_income": 22077}, {"geo": "Montenegro", "year": 2015, "pli": 56.2, "gdp_pps": 42.0, "hicp": null, "median_income": 5645}, {"geo": "Montenegro", "year": 2016, "pli": 55.9, "gdp_pps": 44.0, "hicp": null, "median_income": 6061}, {"geo": "Montenegro", "year": 2017, "pli": 56.9, "gdp_pps": 45.0, "hicp": 2.7, "median_income": 6511}, {"geo": "Montenegro", "year": 2018, "pli": 57.5, "gdp_pps": 47.0, "hicp": 2.6, "median_income": 6831}, {"geo": "Montenegro", "year": 2019, "pli": 57.1, "gdp_pps": 49.0, "hicp": 0.5, "median_income": 6728}, {"geo": "Montenegro", "year": 2020, "pli": 59.9, "gdp_pps": 44.0, "hicp": -0.5, "median_income": 6861}, {"geo": "Montenegro", "year": 2021, "pli": 59.3, "gdp_pps": 46.0, "hicp": 2.5, "median_income": 6328}, {"geo": "Montenegro", "year": 2022, "pli": 61.4, "gdp_pps": 48.0, "hicp": 11.9, "median_income": 7309}, {"geo": "Montenegro", "year": 2023, "pli": 62.4, "gdp_pps": 52.0, "hicp": 8.7, "median_income": 9167}, {"geo": "Montenegro", "year": 2024, "pli": 64.2, "gdp_pps": 53.0, "hicp": 3.6, "median_income": null}, {"geo": "Netherlands", "year": 2015, "pli": 114.1, "gdp_pps": 132.0, "hicp": 0.2, "median_income": 19387}, {"geo": "Netherlands", "year": 2016, "pli": 115.8, "gdp_pps": 130.0, "hicp": 0.1, "median_income": 21189}, {"geo": "Netherlands", "year": 2017, "pli": 114.8, "gdp_pps": 130.0, "hicp": 1.3, "median_income": 21195}, {"geo": "Netherlands", "year": 2018, "pli": 114.3, "gdp_pps": 130.0, "hicp": 1.6, "median_income": 21528}, {"geo": "Netherlands", "year": 2019, "pli": 117.1, "gdp_pps": 128.0, "hicp": 2.7, "median_income": 21968}, {"geo": "Netherlands", "year": 2020, "pli": 116.2, "gdp_pps": 131.0, "hicp": 1.1, "median_income": 22117}, {"geo": "Netherlands", "year": 2021, "pli": 115.5, "gdp_pps": 132.0, "hicp": 2.8, "median_income": 24560}, {"geo": "Netherlands", "year": 2022, "pli": 114.2, "gdp_pps": 134.0, "hicp": 11.6, "median_income": 25437}, {"geo": "Netherlands", "year": 2023, "pli": 115.6, "gdp_pps": 131.0, "hicp": 4.1, "median_income": 25116}, {"geo": "Netherlands", "year": 2024, "pli": 115.1, "gdp_pps": 134.0, "hicp": 3.2, "median_income": 27091}, {"geo": "North Macedonia", "year": 2015, "pli": 48.1, "gdp_pps": 39.0, "hicp": 0.1, "median_income": 4556}, {"geo": "North Macedonia", "year": 2016, "pli": 47.9, "gdp_pps": 40.0, "hicp": 0.2, "median_income": 4940}, {"geo": "North Macedonia", "year": 2017, "pli": 48.8, "gdp_pps": 40.0, "hicp": 2.1, "median_income": 5302}, {"geo": "North Macedonia", "year": 2018, "pli": 49.9, "gdp_pps": 41.0, "hicp": 2.3, "median_income": 5496}, {"geo": "North Macedonia", "year": 2019, "pli": 49.8, "gdp_pps": 42.0, "hicp": 0.7, "median_income": 5638}, {"geo": "North Macedonia", "year": 2020, "pli": 51.2, "gdp_pps": 42.0, "hicp": 1.2, "median_income": 5988}, {"geo": "North Macedonia", "year": 2021, "pli": 48.9, "gdp_pps": 43.0, "hicp": 3.4, "median_income": 6319}, {"geo": "North Macedonia", "year": 2022, "pli": 52.5, "gdp_pps": 41.0, "hicp": 14.0, "median_income": 7069}, {"geo": "North Macedonia", "year": 2023, "pli": 54.1, "gdp_pps": 41.0, "hicp": 9.0, "median_income": 7609}, {"geo": "North Macedonia", "year": 2024, "pli": 54.1, "gdp_pps": 42.0, "hicp": 4.2, "median_income": 9356}, {"geo": "Norway", "year": 2015, "pli": 152.1, "gdp_pps": 157.0, "hicp": 2.0, "median_income": 28323}, {"geo": "Norway", "year": 2016, "pli": 152.6, "gdp_pps": 145.0, "hicp": 3.9, "median_income": 27670}, {"geo": "Norway", "year": 2017, "pli": 148.4, "gdp_pps": 150.0, "hicp": 1.9, "median_income": 26265}, {"geo": "Norway", "year": 2018, "pli": 145.6, "gdp_pps": 156.0, "hicp": 3.0, "median_income": 26300}, {"geo": "Norway", "year": 2019, "pli": 144.6, "gdp_pps": 146.0, "hicp": 2.3, "median_income": 26706}, {"geo": "Norway", "year": 2020, "pli": 135.8, "gdp_pps": 141.0, "hicp": 1.2, "median_income": 27893}, {"geo": "Norway", "year": 2021, "pli": 141.4, "gdp_pps": 171.0, "hicp": 3.9, "median_income": 26365}, {"geo": "Norway", "year": 2022, "pli": 143.0, "gdp_pps": 214.0, "hicp": 6.2, "median_income": 27090}, {"geo": "Norway", "year": 2023, "pli": 127.4, "gdp_pps": 169.0, "hicp": 5.7, "median_income": 29297}, {"geo": "Norway", "year": 2024, "pli": 127.2, "gdp_pps": 160.0, "hicp": 2.8, "median_income": 32338}, {"geo": "Poland", "year": 2015, "pli": 57.6, "gdp_pps": 70.0, "hicp": -0.7, "median_income": 9950}, {"geo": "Poland", "year": 2016, "pli": 55.9, "gdp_pps": 69.0, "hicp": -0.2, "median_income": 10865}, {"geo": "Poland", "year": 2017, "pli": 58.8, "gdp_pps": 70.0, "hicp": 1.6, "median_income": 11079}, {"geo": "Poland", "year": 2018, "pli": 59.6, "gdp_pps": 72.0, "hicp": 1.2, "median_income": 11513}, {"geo": "Poland", "year": 2019, "pli": 59.9, "gdp_pps": 74.0, "hicp": 2.2, "median_income": 12335}, {"geo": "Poland", "year": 2020, "pli": 59.1, "gdp_pps": 79.0, "hicp": 3.6, "median_income": 13350}, {"geo": "Poland", "year": 2021, "pli": 60.5, "gdp_pps": 79.0, "hicp": 5.2, "median_income": 13870}, {"geo": "Poland", "year": 2022, "pli": 62.0, "gdp_pps": 78.0, "hicp": 13.2, "median_income": 14906}, {"geo": "Poland", "year": 2023, "pli": 68.2, "gdp_pps": 77.0, "hicp": 10.8, "median_income": 16551}, {"geo": "Poland", "year": 2024, "pli": 72.3, "gdp_pps": 78.0, "hicp": 3.7, "median_income": 18064}, {"geo": "Portugal", "year": 2015, "pli": 86.5, "gdp_pps": 76.0, "hicp": 0.5, "median_income": 10317}, {"geo": "Portugal", "year": 2016, "pli": 87.3, "gdp_pps": 77.0, "hicp": 0.6, "median_income": 10805}, {"geo": "Portugal", "year": 2017, "pli": 88.9, "gdp_pps": 76.0, "hicp": 1.6, "median_income": 10826}, {"geo": "Portugal", "year": 2018, "pli": 88.2, "gdp_pps": 77.0, "hicp": 1.2, "median_income": 10801}, {"geo": "Portugal", "year": 2019, "pli": 87.9, "gdp_pps": 77.0, "hicp": 0.3, "median_income": 11602}, {"geo": "Portugal", "year": 2020, "pli": 90.3, "gdp_pps": 75.0, "hicp": -0.1, "median_income": 12333}, {"geo": "Portugal", "year": 2021, "pli": 88.4, "gdp_pps": 74.0, "hicp": 0.9, "median_income": 12404}, {"geo": "Portugal", "year": 2022, "pli": 87.2, "gdp_pps": 77.0, "hicp": 8.1, "median_income": 12266}, {"geo": "Portugal", "year": 2023, "pli": 86.2, "gdp_pps": 81.0, "hicp": 5.3, "median_income": 13421}, {"geo": "Portugal", "year": 2024, "pli": 86.7, "gdp_pps": 82.0, "hicp": 2.7, "median_income": 14446}, {"geo": "Romania", "year": 2015, "pli": 55.1, "gdp_pps": 56.0, "hicp": -0.4, "median_income": 4357}, {"geo": "Romania", "year": 2016, "pli": 53.8, "gdp_pps": 58.0, "hicp": -1.1, "median_income": 4724}, {"geo": "Romania", "year": 2017, "pli": 54.7, "gdp_pps": 62.0, "hicp": 1.1, "median_income": 5314}, {"geo": "Romania", "year": 2018, "pli": 55.7, "gdp_pps": 65.0, "hicp": 4.1, "median_income": 6278}, {"geo": "Romania", "year": 2019, "pli": 55.5, "gdp_pps": 69.0, "hicp": 3.9, "median_income": 7338}, {"geo": "Romania", "year": 2020, "pli": 55.4, "gdp_pps": 72.0, "hicp": 2.3, "median_income": 7724}, {"geo": "Romania", "year": 2021, "pli": 56.0, "gdp_pps": 72.0, "hicp": 4.1, "median_income": 8698}, {"geo": "Romania", "year": 2022, "pli": 60.8, "gdp_pps": 72.0, "hicp": 12.0, "median_income": 10033}, {"geo": "Romania", "year": 2023, "pli": 61.8, "gdp_pps": 75.0, "hicp": 9.7, "median_income": 11084}, {"geo": "Romania", "year": 2024, "pli": 64.1, "gdp_pps": 77.0, "hicp": 5.8, "median_income": 13023}, {"geo": "Serbia", "year": 2015, "pli": 51.4, "gdp_pps": 40.0, "hicp": 1.5, "median_income": 4722}, {"geo": "Serbia", "year": 2016, "pli": 51.5, "gdp_pps": 40.0, "hicp": 1.3, "median_income": 4998}, {"geo": "Serbia", "year": 2017, "pli": 53.8, "gdp_pps": 40.0, "hicp": 3.3, "median_income": 5131}, {"geo": "Serbia", "year": 2018, "pli": 55.8, "gdp_pps": 41.0, "hicp": 2.0, "median_income": 5226}, {"geo": "Serbia", "year": 2019, "pli": 56.5, "gdp_pps": 42.0, "hicp": 1.9, "median_income": 6014}, {"geo": "Serbia", "year": 2020, "pli": 58.6, "gdp_pps": 44.0, "hicp": 1.8, "median_income": 6506}, {"geo": "Serbia", "year": 2021, "pli": 59.6, "gdp_pps": 45.0, "hicp": 4.0, "median_income": 6845}, {"geo": "Serbia", "year": 2022, "pli": 63.6, "gdp_pps": 45.0, "hicp": 11.7, "median_income": 7411}, {"geo": "Serbia", "year": 2023, "pli": 65.2, "gdp_pps": 48.0, "hicp": 12.1, "median_income": 7752}, {"geo": "Serbia", "year": 2024, "pli": 67.0, "gdp_pps": 52.0, "hicp": 4.8, "median_income": 8971}, {"geo": "Slovakia", "year": 2015, "pli": 70.7, "gdp_pps": 78.0, "hicp": -0.3, "median_income": 10220}, {"geo": "Slovakia", "year": 2016, "pli": 77.9, "gdp_pps": 73.0, "hicp": -0.5, "median_income": 10466}, {"geo": "Slovakia", "year": 2017, "pli": 82.4, "gdp_pps": 70.0, "hicp": 1.4, "median_income": 9605}, {"geo": "Slovakia", "year": 2018, "pli": 84.5, "gdp_pps": 70.0, "hicp": 2.5, "median_income": 9744}, {"geo": "Slovakia", "year": 2019, "pli": 86.0, "gdp_pps": 70.0, "hicp": 2.8, "median_income": 10503}, {"geo": "Slovakia", "year": 2020, "pli": 83.2, "gdp_pps": 74.0, "hicp": 2.0, "median_income": 10076}, {"geo": "Slovakia", "year": 2021, "pli": 82.4, "gdp_pps": 74.0, "hicp": 2.8, "median_income": 9425}, {"geo": "Slovakia", "year": 2022, "pli": 85.9, "gdp_pps": 71.0, "hicp": 12.1, "median_income": 9826}, {"geo": "Slovakia", "year": 2023, "pli": 84.0, "gdp_pps": 74.0, "hicp": 11.0, "median_income": 10670}, {"geo": "Slovakia", "year": 2024, "pli": 84.6, "gdp_pps": 75.0, "hicp": 3.2, "median_income": 11433}, {"geo": "Slovenia", "year": 2015, "pli": 86.0, "gdp_pps": 81.0, "hicp": -0.8, "median_income": 15102}, {"geo": "Slovenia", "year": 2016, "pli": 86.9, "gdp_pps": 82.0, "hicp": -0.2, "median_income": 15250}, {"geo": "Slovenia", "year": 2017, "pli": 86.5, "gdp_pps": 84.0, "hicp": 1.6, "median_income": 15245}, {"geo": "Slovenia", "year": 2018, "pli": 87.1, "gdp_pps": 86.0, "hicp": 1.9, "median_income": 15771}, {"geo": "Slovenia", "year": 2019, "pli": 86.9, "gdp_pps": 87.0, "hicp": 1.7, "median_income": 16633}, {"geo": "Slovenia", "year": 2020, "pli": 87.3, "gdp_pps": 88.0, "hicp": -0.3, "median_income": 16988}, {"geo": "Slovenia", "year": 2021, "pli": 87.1, "gdp_pps": 88.0, "hicp": 2.0, "median_income": 17579}, {"geo": "Slovenia", "year": 2022, "pli": 88.1, "gdp_pps": 89.0, "hicp": 9.3, "median_income": 18792}, {"geo": "Slovenia", "year": 2023, "pli": 89.5, "gdp_pps": 91.0, "hicp": 7.2, "median_income": 20273}, {"geo": "Slovenia", "year": 2024, "pli": 89.5, "gdp_pps": 90.0, "hicp": 2.0, "median_income": 21572}, {"geo": "Spain", "year": 2015, "pli": 94.8, "gdp_pps": 91.0, "hicp": -0.6, "median_income": 14463}, {"geo": "Spain", "year": 2016, "pli": 95.3, "gdp_pps": 92.0, "hicp": -0.3, "median_income": 15347}, {"geo": "Spain", "year": 2017, "pli": 94.7, "gdp_pps": 93.0, "hicp": 2.0, "median_income": 15526}, {"geo": "Spain", "year": 2018, "pli": 96.4, "gdp_pps": 91.0, "hicp": 1.7, "median_income": 16030}, {"geo": "Spain", "year": 2019, "pli": 95.9, "gdp_pps": 91.0, "hicp": 0.8, "median_income": 16171}, {"geo": "Spain", "year": 2020, "pli": 97.8, "gdp_pps": 83.0, "hicp": -0.3, "median_income": 16661}, {"geo": "Spain", "year": 2021, "pli": 94.5, "gdp_pps": 85.0, "hicp": 3.0, "median_income": 16297}, {"geo": "Spain", "year": 2022, "pli": 93.8, "gdp_pps": 88.0, "hicp": 8.3, "median_income": 17254}, {"geo": "Spain", "year": 2023, "pli": 90.3, "gdp_pps": 91.0, "hicp": 3.4, "median_income": 19021}, {"geo": "Spain", "year": 2024, "pli": 91.3, "gdp_pps": 91.0, "hicp": 2.9, "median_income": 20800}, {"geo": "Sweden", "year": 2015, "pli": 127.8, "gdp_pps": 126.0, "hicp": 0.7, "median_income": 20154}, {"geo": "Sweden", "year": 2016, "pli": 130.7, "gdp_pps": 123.0, "hicp": 1.1, "median_income": 20955}, {"geo": "Sweden", "year": 2017, "pli": 131.2, "gdp_pps": 119.0, "hicp": 1.9, "median_income": 20237}, {"geo": "Sweden", "year": 2018, "pli": 125.1, "gdp_pps": 117.0, "hicp": 2.0, "median_income": 20414}, {"geo": "Sweden", "year": 2019, "pli": 123.1, "gdp_pps": 117.0, "hicp": 1.7, "median_income": 20413}, {"geo": "Sweden", "year": 2020, "pli": 124.8, "gdp_pps": 120.0, "hicp": 0.7, "median_income": 20083}, {"geo": "Sweden", "year": 2021, "pli": 128.7, "gdp_pps": 120.0, "hicp": 2.7, "median_income": 20673}, {"geo": "Sweden", "year": 2022, "pli": 122.7, "gdp_pps": 113.0, "hicp": 8.1, "median_income": 20608}, {"geo": "Sweden", "year": 2023, "pli": 115.2, "gdp_pps": 111.0, "hicp": 5.9, "median_income": 22290}, {"geo": "Sweden", "year": 2024, "pli": 116.4, "gdp_pps": 111.0, "hicp": 2.0, "median_income": 23693}, {"geo": "Switzerland", "year": 2015, "pli": 170.0, "gdp_pps": 172.0, "hicp": -0.8, "median_income": 26590}, {"geo": "Switzerland", "year": 2016, "pli": 168.2, "gdp_pps": 167.0, "hicp": -0.5, "median_income": 27692}, {"geo": "Switzerland", "year": 2017, "pli": 164.7, "gdp_pps": 161.0, "hicp": 0.6, "median_income": 27101}, {"geo": "Switzerland", "year": 2018, "pli": 158.9, "gdp_pps": 160.0, "hicp": 0.9, "median_income": 27066}, {"geo": "Switzerland", "year": 2019, "pli": 165.0, "gdp_pps": 155.0, "hicp": 0.4, "median_income": 27268}, {"geo": "Switzerland", "year": 2020, "pli": 171.5, "gdp_pps": 156.0, "hicp": -0.8, "median_income": 26163}, {"geo": "Switzerland", "year": 2021, "pli": 166.2, "gdp_pps": 161.0, "hicp": 0.5, "median_income": 26346}, {"geo": "Switzerland", "year": 2022, "pli": 170.7, "gdp_pps": 161.0, "hicp": 2.7, "median_income": 27098}, {"geo": "Switzerland", "year": 2023, "pli": 171.8, "gdp_pps": 154.0, "hicp": 2.3, "median_income": 28247}, {"geo": "Switzerland", "year": 2024, "pli": 173.0, "gdp_pps": 151.0, "hicp": 1.1, "median_income": 29828}, {"geo": "T\u00fcrkiye", "year": 2015, "pli": 61.4, "gdp_pps": 67.0, "hicp": null, "median_income": 5661}, {"geo": "T\u00fcrkiye", "year": 2016, "pli": 61.7, "gdp_pps": 65.0, "hicp": null, "median_income": 6501}, {"geo": "T\u00fcrkiye", "year": 2017, "pli": 55.3, "gdp_pps": 66.0, "hicp": null, "median_income": 6527}, {"geo": "T\u00fcrkiye", "year": 2018, "pli": 45.8, "gdp_pps": 64.0, "hicp": null, "median_income": 6466}, {"geo": "T\u00fcrkiye", "year": 2019, "pli": 47.3, "gdp_pps": 60.0, "hicp": null, "median_income": 6781}, {"geo": "T\u00fcrkiye", "year": 2020, "pli": 44.9, "gdp_pps": 61.0, "hicp": null, "median_income": 6620}, {"geo": "T\u00fcrkiye", "year": 2021, "pli": 42.2, "gdp_pps": 62.0, "hicp": null, "median_income": 6254}, {"geo": "T\u00fcrkiye", "year": 2022, "pli": 41.1, "gdp_pps": 68.0, "hicp": null, "median_income": 6852}, {"geo": "T\u00fcrkiye", "year": 2023, "pli": 45.2, "gdp_pps": 70.0, "hicp": null, "median_income": 7100}, {"geo": "T\u00fcrkiye", "year": 2024, "pli": 55.5, "gdp_pps": 72.0, "hicp": null, "median_income": 9527}, {"geo": "United Kingdom", "year": 2015, "pli": 142.6, "gdp_pps": 111.0, "hicp": 0.0, "median_income": 17782}, {"geo": "United Kingdom", "year": 2016, "pli": 127.7, "gdp_pps": 108.0, "hicp": 0.7, "median_income": 17296}, {"geo": "United Kingdom", "year": 2017, "pli": 119.6, "gdp_pps": 108.0, "hicp": 2.7, "median_income": 18040}, {"geo": "United Kingdom", "year": 2018, "pli": 119.6, "gdp_pps": 106.0, "hicp": 2.5, "median_income": 18423}, {"geo": "United Kingdom", "year": 2019, "pli": 120.9, "gdp_pps": 104.0, "hicp": 1.8, "median_income": null}, {"geo": "United Kingdom", "year": 2020, "pli": 120.3, "gdp_pps": 102.0, "hicp": null, "median_income": null}, {"geo": "United Kingdom", "year": 2021, "pli": 128.1, "gdp_pps": 100.0, "hicp": null, "median_income": null}, {"geo": "United Kingdom", "year": 2022, "pli": 126.0, "gdp_pps": 103.0, "hicp": null, "median_income": null}, {"geo": "United Kingdom", "year": 2023, "pli": 123.5, "gdp_pps": 99.0, "hicp": null, "median_income": null}, {"geo": "United Kingdom", "year": 2024, "pli": 128.4, "gdp_pps": 99.0, "hicp": null, "median_income": null}]
+;
+
+const MEASURES = [
+  { key: 'gdp_pps',       label: 'GDP per Capita (PPS)',    short: 'GDP (PPS)',    unit: 'EU27=100' },
+  { key: 'pli',           label: 'Price Level Index',       short: 'PLI',          unit: 'EU27=100' },
+  { key: 'median_income', label: 'Median Income (PPS)',     short: 'Med. Income',  unit: 'EUR PPS'  },
+  { key: 'hicp',          label: 'HICP Inflation',          short: 'HICP',         unit: '%'        },
+];
+
+let xKey = 'gdp_pps';
+let yKey = 'pli';
+
+const countries = [...new Set(RAW.map(d => d.geo))].sort();
+const years = [...new Set(RAW.map(d => d.year))].sort();
+
+// Populate country select
+const sel = document.getElementById('country-select');
+countries.forEach(c => {
+  const opt = document.createElement('option');
+  opt.value = c; opt.textContent = c; opt.selected = true;
+  sel.appendChild(opt);
+});
+
+// Year marks
+const marksEl = document.getElementById('year-marks');
+years.forEach(y => {
+  const s = document.createElement('span');
+  s.textContent = y; s.dataset.y = y;
+  marksEl.appendChild(s);
+});
+
+function updateMarks() {
+  const y1 = +document.getElementById('slider1').value;
+  const y2 = +document.getElementById('slider2').value;
+  marksEl.querySelectorAll('span').forEach(s => {
+    s.classList.toggle('active', +s.dataset.y === y1 || +s.dataset.y === y2);
+  });
+}
+
+// Axis buttons
+function buildBtns(containerId, activeKey, axis) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  MEASURES.forEach(m => {
+    const b = document.createElement('button');
+    b.className = 'btn';
+    b.textContent = m.short;
+    b.dataset.key = m.key;
+    if (axis === 'x' && m.key === xKey) b.classList.add('active-x');
+    if (axis === 'y' && m.key === yKey) b.classList.add('active-y');
+    if (m.key === xKey && m.key === yKey) b.classList.add('active-x', 'active-y');
+    b.onclick = () => {
+      if (axis === 'x') {
+        xKey = m.key;
+        document.getElementById('x-label').textContent = m.label;
+      } else {
+        yKey = m.key;
+        document.getElementById('y-label').textContent = m.label;
+      }
+      buildBtns('x-btns', xKey, 'x');
+      buildBtns('y-btns', yKey, 'y');
+      render();
+    };
+    c.appendChild(b);
+  });
+}
+
+buildBtns('x-btns', xKey, 'x');
+buildBtns('y-btns', yKey, 'y');
+
+// Render
+function render() {
+  const y1 = +document.getElementById('slider1').value;
+  const y2 = +document.getElementById('slider2').value;
+  const selectedCountries = [...sel.selectedOptions].map(o => o.value);
+
+  document.getElementById('y1-badge').textContent = y1;
+  document.getElementById('y2-badge').textContent = y2;
+  updateMarks();
+
+  const d1 = RAW.filter(d => d.year === y1 && selectedCountries.includes(d.geo));
+  const d2 = RAW.filter(d => d.year === y2 && selectedCountries.includes(d.geo));
+
+  const xM = MEASURES.find(m => m.key === xKey);
+  const yM = MEASURES.find(m => m.key === yKey);
+
+  // Build connector lines
+  const lineTraces = [];
+  d1.forEach(r1 => {
+    const r2 = d2.find(r => r.geo === r1.geo);
+    if (!r2 || r1[xKey] == null || r1[yKey] == null || r2[xKey] == null || r2[yKey] == null) return;
+    lineTraces.push({
+      type: 'scatter', mode: 'lines',
+      x: [r1[xKey], r2[xKey]], y: [r1[yKey], r2[yKey]],
+      line: { color: 'rgba(180,180,180,0.35)', width: 1 },
+      hoverinfo: 'skip', showlegend: false,
+    });
+  });
+
+  const valid1 = d1.filter(d => d[xKey] != null && d[yKey] != null);
+  const valid2 = d2.filter(d => d[xKey] != null && d[yKey] != null);
+
+  const traceOld = {
+    type: 'scatter', mode: 'markers+text',
+    name: String(y1),
+    x: valid1.map(d => d[xKey]),
+    y: valid1.map(d => d[yKey]),
+    text: valid1.map(d => d.geo),
+    textposition: 'top center',
+    textfont: { size: 9, color: 'rgba(180,60,50,0.5)' },
+    customdata: valid1.map(d => [d.geo, d[xKey], d[yKey], d.year]),
+    hovertemplate: '<b>%{customdata[0]}</b> (%{customdata[3]})<br>' + xM.label + ': %{customdata[1]} ' + xM.unit + '<br>' + yM.label + ': %{customdata[2]} ' + yM.unit + '<extra></extra>',
+    marker: { color: '#e8453c', size: 8, opacity: 0.4, line: { color: 'rgba(255,255,255,0.5)', width: 0.5 } },
+  };
+
+  const traceNew = {
+    type: 'scatter', mode: 'markers+text',
+    name: String(y2),
+    x: valid2.map(d => d[xKey]),
+    y: valid2.map(d => d[yKey]),
+    text: valid2.map(d => d.geo),
+    textposition: 'top center',
+    textfont: { size: 9, color: 'rgba(28,28,28,0.7)' },
+    customdata: valid2.map(d => [d.geo, d[xKey], d[yKey], d.year]),
+    hovertemplate: '<b>%{customdata[0]}</b> (%{customdata[3]})<br>' + xM.label + ': %{customdata[1]} ' + xM.unit + '<br>' + yM.label + ': %{customdata[2]} ' + yM.unit + '<extra></extra>',
+    marker: { color: '#1c1c1c', size: 10, opacity: 0.9, line: { color: '#fff', width: 1 } },
+  };
+
+  const layout = {
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: '#fefefe',
+    font: { family: "'Source Sans 3', sans-serif", size: 12, color: '#555' },
+    xaxis: {
+      title: { text: xM.label + ' (' + xM.unit + ')', font: { size: 12 } },
+      gridcolor: '#eee', zerolinecolor: '#ccc', tickfont: { size: 11 },
+    },
+    yaxis: {
+      title: { text: yM.label + ' (' + yM.unit + ')', font: { size: 12 } },
+      gridcolor: '#eee', zerolinecolor: '#ccc', tickfont: { size: 11 },
+    },
+    legend: {
+      orientation: 'h', x: 0, y: -0.12,
+      font: { size: 12 },
+    },
+    margin: { t: 20, r: 20, b: 60, l: 70 },
+    showlegend: true,
+  };
+
+  Plotly.react('scatter', [...lineTraces, traceOld, traceNew], layout, { displayModeBar: false, responsive: true });
+}
+
+document.getElementById('slider1').addEventListener('input', () => {
+  const v1 = +document.getElementById('slider1').value;
+  const v2 = +document.getElementById('slider2').value;
+  if (v1 >= v2) document.getElementById('slider1').value = v2 - 1;
+  render();
+});
+
+document.getElementById('slider2').addEventListener('input', () => {
+  const v1 = +document.getElementById('slider1').value;
+  const v2 = +document.getElementById('slider2').value;
+  if (v2 <= v1) document.getElementById('slider2').value = v1 + 1;
+  render();
+});
+
+sel.addEventListener('change', render);
+
+render();
+</script>
+</body>
+</html>
